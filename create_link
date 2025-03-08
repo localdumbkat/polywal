@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# check if polywal is already symbolic linked to /usr/bin/polywal
+if [ -f /usr/bin/polywal ]; then
+    echo "polywal is already symbolic linked to /usr/bin/polywal"
+    exit 1
+fi
+
+# create symbolic link to /usr/bin/polywal
+if [ -f "$(pwd)/polywal" ]; then
+    echo "creating symbolic link to /usr/bin/polywal..."
+    sudo ln -s "$(pwd)/polywal" /usr/bin/polywal
+    echo "done"
+else
+    echo "polywal.py file not found in current directory"
+    exit 1
+fi
