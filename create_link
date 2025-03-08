@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# check if polywal is already symbolic linked to /usr/bin/polywal
 if [ -f /usr/bin/polywal ]; then
     echo "polywal is already symbolic linked to /usr/bin/polywal"
     exit 1
 fi
 
 # create symbolic link to /usr/bin/polywal
-if [ -f "$(pwd)/polywal" ]; then
+if [ -f "$(pwd)/polywal.py" ]; then
     echo "creating symbolic link to /usr/bin/polywal..."
-    sudo ln -s "$(pwd)/polywal" /usr/bin/polywal
+    sudo ln -s "$(pwd)/polywal.py" /usr/bin/polywal
     sudo chmod +x /usr/bin/polywal
     echo "done"
 else

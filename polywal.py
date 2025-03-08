@@ -125,7 +125,7 @@ def main():
             print("Error: Could not read global polybar config file.")
             sys.exit(1)
     else:
-        try:
+        try: # FIXME this is a mess
             if not os.path.exists(LOCAL_POLYBAR_CONFIG): # file is not found
                 print("polywal did not find a local polybar config file.")
                 print("polywal will create a new config file.")
