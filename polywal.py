@@ -41,22 +41,22 @@ profile1 = {
     "name": "profile1",
     "colors": {
         "background": "1",
-        "background-alt": "2",
-        "foreground": "3",
+        "background-alt": "3",
+        "foreground": "2",
         "primary": "5",
-        "secondary": "6",
+        "secondary": "4",
         "alert": "8",
     }
 }
 profile2 = {
     "name": "profile2",
     "colors": {
-        "background": "#ffffff",
-        "background-alt": "#ffffff",
-        "foreground": "#000000",
-        "primary": "#000000",
-        "secondary": "#ffffff",
-        "alert": "#0000ff",
+        "background": "2",
+        "background-alt": "4",
+        "foreground": "5",
+        "primary": "8",
+        "secondary": "7",
+        "alert": "8",
     }
 }
 profile3 = {
@@ -72,8 +72,12 @@ profile3 = {
 }
 
 def read_wal_colors() -> list[str]:
-    with open(WAL_COLOR_PATH, 'r') as f:
-        return [line for line in f.readlines() if line.strip()]
+    try:
+        with open(WAL_COLOR_PATH, 'r') as f:
+            return [line for line in f.readlines() if line.strip()]
+    except FileNotFoundError:
+        print("Error: Could not find wal colors file.")
+        sys.exit(1)
     
 def create_backup(config: dict):
     if config["use_global"]:
@@ -109,7 +113,6 @@ def main():
         create_backup(config)
 
     # read the colors from the wal cache
-    print(f"reading colors from {WAL_COLOR_PATH}") # FIXME
     colors = read_wal_colors()
 
     # config
@@ -117,27 +120,32 @@ def main():
 
     if config["use_global"]:
         try:
-            print(f"reading config {GLOBAL_POLYBAR_CONFIG}") # FIXME
             polybar_config.read(GLOBAL_POLYBAR_CONFIG)
         except:
             print("Error: Could not read global polybar config file.")
             sys.exit(1)
-        else:
-            print(f"reading config went fine {GLOBAL_POLYBAR_CONFIG}") # FIXME
     else:
         try:
-            print(f"reading config {LOCAL_POLYBAR_CONFIG}") # FIXME
-            polybar_config.read(LOCAL_POLYBAR_CONFIG)
+            if not os.path.exists(LOCAL_POLYBAR_CONFIG): # file is not found
+                print("polywal did not find a local polybar config file.")
+                print("polywal will create a new config file.")
+                tf = open(LOCAL_POLYBAR_CONFIG, 'w')
+                tf.write("[colors]\n")
+                print("created new config file, please run polywal again.")
+                sys.exit(1)
+            else: # file is found
+                polybar_config.read(LOCAL_POLYBAR_CONFIG)
         except:
             print("Error: Could not read local polybar config file.")
             sys.exit(1)
-        else:
-            print(f"reading config went fine {LOCAL_POLYBAR_CONFIG}") # FIXME
     
     # update the program config with the new colors
     if polybar_config.has_section("colors"):
         for key, value in config["profile"]["colors"].items():
-            polybar_config["colors"][key] = colors[int(value) - 1]
+            try:
+                polybar_config["colors"][key] = colors[int(value) - 1]
+            except IndexError: # fix index out of range error
+                polybar_config["colors"][key] = 1
     else:
         polybar_config["colors"] = config["profile"]["colors"]
 
@@ -146,18 +154,17 @@ def main():
         try:
             with open(GLOBAL_POLYBAR_CONFIG, 'w') as f:
                 polybar_config.write(f)
-        except Exception as e:
-            print("Error: Could not write to global polybar config file.")
-            print(e)
+        except PermissionError:
+            print("polywal failed to write to global polybar config file.")
+            print("Try running polywal with sudo.")
             sys.exit(1)
+        else:
+            print("polywal wrote to global polybar config")
     else:
-        try:
-            with open(LOCAL_POLYBAR_CONFIG, 'w') as f:
-                polybar_config.write(f)
-        except Exception as e:
-            print("Error: Could not write to local polybar config file.")
-            print(e)
-            sys.exit(1)
+        with open(LOCAL_POLYBAR_CONFIG, 'w') as f:
+            polybar_config.write(f)
+            print("polywal wrote to local polybar config file.")
+        
 
 if __name__ == '__main__':
     main()
