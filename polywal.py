@@ -109,6 +109,7 @@ def main():
         create_backup(config)
 
     # read the colors from the wal cache
+    print(f"reading colors from {WAL_COLOR_PATH}") # FIXME
     colors = read_wal_colors()
 
     # config
@@ -116,16 +117,22 @@ def main():
 
     if config["use_global"]:
         try:
+            print(f"reading config {GLOBAL_POLYBAR_CONFIG}") # FIXME
             polybar_config.read(GLOBAL_POLYBAR_CONFIG)
         except:
             print("Error: Could not read global polybar config file.")
             sys.exit(1)
+        else:
+            print(f"reading config went fine {GLOBAL_POLYBAR_CONFIG}") # FIXME
     else:
         try:
+            print(f"reading config {LOCAL_POLYBAR_CONFIG}") # FIXME
             polybar_config.read(LOCAL_POLYBAR_CONFIG)
         except:
             print("Error: Could not read local polybar config file.")
             sys.exit(1)
+        else:
+            print(f"reading config went fine {LOCAL_POLYBAR_CONFIG}") # FIXME
     
     # update the program config with the new colors
     if polybar_config.has_section("colors"):
@@ -139,15 +146,17 @@ def main():
         try:
             with open(GLOBAL_POLYBAR_CONFIG, 'w') as f:
                 polybar_config.write(f)
-        except:
+        except Exception as e:
             print("Error: Could not write to global polybar config file.")
+            print(e)
             sys.exit(1)
     else:
         try:
             with open(LOCAL_POLYBAR_CONFIG, 'w') as f:
                 polybar_config.write(f)
-        except:
+        except Exception as e:
             print("Error: Could not write to local polybar config file.")
+            print(e)
             sys.exit(1)
 
 if __name__ == '__main__':
