@@ -10,6 +10,7 @@ fi
 if [ -f "$(pwd)/polywal" ]; then
     echo "creating symbolic link to /usr/bin/polywal..."
     sudo ln -s "$(pwd)/polywal" /usr/bin/polywal
+    sudo chmod +x /usr/bin/polywal
     echo "done"
 else
     echo "polywal.py file not found in current directory"
