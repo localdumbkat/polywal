@@ -26,7 +26,7 @@ import configparser
 
 # paths
 WAL_COLOR_PATH=os.path.expanduser("~/.cache/wal/colors")
-GLOBAL_POLYBAR_CONFIG=os.path.expanduser("/etc/xdg/polybar/config.ini")
+GLOBAL_POLYBAR_CONFIG=os.path.expanduser("/etc/polybar/config.ini")
 LOCAL_POLYBAR_CONFIG=os.path.expanduser("~/.config/polybar/config.ini")
 
 # variables
